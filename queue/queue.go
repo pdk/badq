@@ -18,19 +18,16 @@ func New[T any]() *Queue[T] {
 
 // Push adds a data item to the Queue.
 func (q *Queue[T]) Push(data T) {
-
-	for !q.readStack.Empty() {
-		q.holdStack.Push(q.readStack.Pop())
-	}
-
-	q.readStack.Push(data)
+	q.holdStack.Push(data)
 }
 
 // Pull removes (and returns) the oldest value from the Queue.
 func (q *Queue[T]) Pull() T {
 
-	for !q.holdStack.Empty() {
-		q.readStack.Push(q.holdStack.Pop())
+	if q.readStack.Empty() {
+		for !q.holdStack.Empty() {
+			q.readStack.Push(q.holdStack.Pop())
+		}
 	}
 
 	return q.readStack.Pop()
